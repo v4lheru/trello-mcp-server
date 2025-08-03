@@ -182,9 +182,17 @@ Add to your config file:
 // Limit results
 { tool: "get_cards_in_list", arguments: { listId: "abc", maxItems: 10 } }
 
-// Summarize large datasets
+// Summarize large datasets (returns 5 items by default with statistics)
 { tool: "get_boards", arguments: { summarize: true } }
+
+// Summarize with custom limit (returns 20 items with statistics)
+{ tool: "get_cards_in_list", arguments: { listId: "abc", summarize: true, maxItems: 20 } }
 ```
+
+**Note on `summarize` parameter:**
+- When `summarize: true` is used, the response includes only the first 5 items by default along with summary statistics
+- Use `maxItems` together with `summarize: true` to override the default 5-item limit
+- Without `summarize` or with `summarize: false`, all items are returned (unless limited by `maxItems`)
 
 ## Development
 

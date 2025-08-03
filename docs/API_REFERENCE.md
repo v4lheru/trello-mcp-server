@@ -27,8 +27,16 @@ The Trello MCP Server provides 80+ tools for comprehensive Trello management. Ea
 
 ### Optimization Parameters
 Most read operations support optimization parameters:
-- `fields`: Array of specific fields to include
-- `optimizationLevel`: One of `minimal`, `standard`, `detailed`, `full`
+- `detailLevel`: One of `minimal`, `standard`, `detailed`, `full` - Controls which fields are included in the response
+- `fields`: Array of specific fields to include (overrides detailLevel)
+- `maxItems`: Maximum number of items to return for list operations
+- `summarize`: Boolean (true/false) - For list operations only, returns summary statistics with limited items
+
+**Important Notes on `summarize`:**
+- When `summarize: true`, only the first 5 items are returned by default along with summary statistics
+- Use `maxItems` with `summarize: true` to override the default 5-item limit
+- Example: `{ summarize: true, maxItems: 20 }` returns 20 items with summary
+- Without `summarize`, all items are returned unless limited by `maxItems`
 
 ## Board Tools
 
@@ -38,17 +46,33 @@ Retrieve a list of boards for the authenticated user.
 **Parameters:**
 - `filter` (optional): `all`, `closed`, `members`, `open`, `organization`, `public`, `starred`, `unpinned`
 - `fields` (optional): Array of field names
-- `optimizationLevel` (optional): Response detail level
+- `detailLevel` (optional): Response detail level
+- `maxItems` (optional): Maximum number of boards to return
+- `summarize` (optional): Return summary with limited items (default: false)
 
-**Example:**
+**Examples:**
 ```json
+// Basic usage
 {
   "filter": "open",
-  "optimizationLevel": "minimal"
+  "detailLevel": "minimal"
+}
+
+// With summarize (returns 5 boards by default)
+{
+  "filter": "open",
+  "summarize": true
+}
+
+// With summarize and custom limit
+{
+  "filter": "open",
+  "summarize": true,
+  "maxItems": 10
 }
 ```
 
-**Response:** Array of board objects
+**Response:** Array of board objects (or summary object if summarize is true)
 
 ### get_board
 Retrieve detailed information about a specific board.

@@ -99,7 +99,31 @@ Specify exact fields needed:
 }
 ```
 
-### Method 3: Default Configuration
+### Method 3: Array Summarization
+Use `summarize` for large list operations:
+
+```json
+// Get summary with default 5 items
+{
+  "listId": "507f1f77bcf86cd799439011",
+  "summarize": true
+}
+
+// Get summary with custom limit
+{
+  "listId": "507f1f77bcf86cd799439011",
+  "summarize": true,
+  "maxItems": 20
+}
+```
+
+**Important:** When `summarize: true` is used:
+- Returns only the first 5 items by default
+- Includes summary statistics (total count, stats)
+- Use `maxItems` to override the 5-item default
+- Response format changes to include metadata
+
+### Method 4: Default Configuration
 Set a global default in environment:
 
 ```bash
@@ -204,7 +228,30 @@ for (const list of selectedLists) {
 }
 ```
 
-### 4. Cache Optimization Level Per Use Case
+### 4. Use Summarization for Large Datasets
+```javascript
+// When dealing with boards that have many cards
+const cards = await getCardsInList({
+  listId: "789ghi",
+  summarize: true,
+  maxItems: 10  // Get 10 cards instead of default 5
+});
+
+// Response will look like:
+// {
+//   totalCount: 150,
+//   items: [...10 cards...],
+//   stats: {
+//     withDueDate: 45,
+//     overdue: 12,
+//     completed: 23
+//   },
+//   hasMore: true,
+//   remainingCount: 140
+// }
+```
+
+### 5. Cache Optimization Level Per Use Case
 ```javascript
 const OPTIMIZATION_PROFILES = {
   boardOverview: "minimal",
