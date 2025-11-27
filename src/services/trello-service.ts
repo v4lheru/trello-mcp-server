@@ -6,7 +6,6 @@
  */
 
 import { BaseService } from './base-service.js';
-import config from '../config.js';
 
 /**
  * Service for interacting with the Trello API

@@ -7,7 +7,9 @@
  */
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import config from '../config.js';
+
+// Default timeout for API requests (30 seconds)
+const DEFAULT_TIMEOUT = 30000;
 
 export abstract class BaseService {
     protected client: AxiosInstance;
@@ -23,7 +25,7 @@ export abstract class BaseService {
         this.client = axios.create({
             baseURL,
             headers,
-            timeout: config.serviceTimeout
+            timeout: DEFAULT_TIMEOUT
         });
 
         // Add response interceptor for rate limit handling

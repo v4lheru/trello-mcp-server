@@ -1,104 +1,47 @@
 /**
  * Configuration Module
- * 
+ *
  * Centralizes all configuration settings for the MCP server.
- * Loads environment variables and provides type-safe access to configuration.
- * Validates required settings and provides sensible defaults for optional ones.
+ * Credentials are loaded ONLY from the OS credential store (no plaintext).
  */
 
-import dotenv from 'dotenv';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-// Load environment variables from .env file
-dotenv.config();
-
-// Process command line arguments for environment variables
-const args = process.argv.slice(2);
-const envArgs: { [key: string]: string } = {};
-
-for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--env' && i + 1 < args.length) {
-        const [key, value] = args[i + 1].split('=');
-        if (key && value) {
-            envArgs[key] = value;
-        }
-        i++;
-    }
-}
+import { getCredentials, TrelloCredentials } from './credentials.js';
 
 /**
  * Configuration interface defining all available settings
  */
 export interface Config {
-    // API Keys and Authentication
-    apiKey: string;
-
-    // Trello Configuration
+    // Trello Configuration (loaded from OS credential store)
     trello: {
         apiKey: string;
         token: string;
     };
 
-    // Service Configuration
-    serviceUrl: string;
-    serviceTimeout: number;
-
-    // Optional Settings
+    // Optional Settings (from environment, safe to be plaintext)
     debug: boolean;
     logLevel: 'debug' | 'info' | 'warn' | 'error';
 }
 
 /**
- * The configuration object with all settings
- * Command line arguments take precedence over environment variables
+ * Load configuration asynchronously.
+ * Trello credentials are loaded from the OS credential store only.
  */
-const configuration: Config = {
-    // API Keys and Authentication
-    apiKey: envArgs.API_KEY || process.env.API_KEY || '',
+export async function loadConfig(): Promise<Config> {
 
-    // Trello Configuration
-    trello: {
-        apiKey: envArgs.TRELLO_API_KEY || process.env.TRELLO_API_KEY || '',
-        token: envArgs.TRELLO_TOKEN || process.env.TRELLO_TOKEN || ''
-    },
+    // Load credentials from OS credential store (throws if not found)
+    const credentials: TrelloCredentials = await getCredentials();
 
-    // Service Configuration
-    serviceUrl: envArgs.SERVICE_URL || process.env.SERVICE_URL || 'https://api.example.com',
-    serviceTimeout: parseInt(envArgs.SERVICE_TIMEOUT || process.env.SERVICE_TIMEOUT || '30000', 10),
+    // Build configuration object
+    const config: Config = {
+        trello: {
+            apiKey: credentials.apiKey,
+            token: credentials.token,
+        },
 
-    // Optional Settings
-    debug: (envArgs.DEBUG || process.env.DEBUG || 'false').toLowerCase() === 'true',
-    logLevel: (envArgs.LOG_LEVEL || process.env.LOG_LEVEL || 'info') as Config['logLevel'],
-};
+        // Optional settings can still come from environment (non-sensitive)
+        debug: (process.env.DEBUG || 'false').toLowerCase() === 'true',
+        logLevel: (process.env.LOG_LEVEL || 'info') as Config['logLevel'],
+    };
 
-/**
- * Validate required configuration settings
- */
-const validateConfig = (config: Config): void => {
-    const missingEnvVars: string[] = [];
-
-    // Check top-level required fields
-    if (!config.apiKey) {
-        missingEnvVars.push('API_KEY');
-    }
-
-    // Check Trello configuration
-    if (!config.trello.apiKey) {
-        missingEnvVars.push('TRELLO_API_KEY');
-    }
-    if (!config.trello.token) {
-        missingEnvVars.push('TRELLO_TOKEN');
-    }
-
-    if (missingEnvVars.length > 0) {
-        throw new Error(
-            `Missing required environment variables: ${missingEnvVars.join(', ')}`
-        );
-    }
-};
-
-// Validate configuration
-validateConfig(configuration);
-
-export default configuration;
+    return config;
+}
