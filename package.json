@@ -1,12 +1,13 @@
 {
     "name": "trello-mcp-server",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "private": true,
-    "description": "Trello MCP Server - A Model Context Protocol server for interacting with the Trello API",
+    "description": "Trello MCP Server - A Model Context Protocol server for interacting with the Trello API (with secure credential storage)",
     "type": "module",
     "main": "build/index.js",
     "bin": {
-        "trello-mcp-server": "build/index.js"
+        "trello-mcp-server": "build/index.js",
+        "trello-setup-credentials": "build/setup-credentials.js"
     },
     "files": [
         "build",
@@ -14,10 +15,12 @@
         "LICENSE"
     ],
     "scripts": {
-        "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+        "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\" && node -e \"require('fs').chmodSync('build/setup-credentials.js', '755')\"",
         "start": "node build/index.js",
         "dev": "tsc -w",
         "prepare": "npm run build",
+        "setup-credentials": "node build/setup-credentials.js",
+        "delete-credentials": "node build/setup-credentials.js --delete",
         "test": "echo \"No tests specified\" && exit 0"
     },
     "keywords": [
@@ -26,14 +29,15 @@
         "model-context-protocol",
         "trello",
         "server",
-        "api"
+        "api",
+        "secure-credentials"
     ],
     "author": "",
     "license": "MIT",
     "dependencies": {
         "@modelcontextprotocol/sdk": "0.6.0",
         "axios": "^1.6.7",
-        "dotenv": "^16.4.1"
+        "keytar": "^7.9.0"
     },
     "devDependencies": {
         "@types/node": "^20.11.16",

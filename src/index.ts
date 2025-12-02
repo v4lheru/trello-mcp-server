@@ -2,16 +2,17 @@
 
 /**
  * Trello MCP Server
- * 
+ *
  * A Model Context Protocol server that provides tools for interacting with the Trello API.
  * This server allows AI assistants to perform operations on Trello boards, lists, cards, and more.
- * 
+ *
  * Features:
  * - Complete Trello API integration
  * - Support for boards, lists, cards, members, labels, and checklists
  * - Comprehensive error handling and rate limiting
  * - Type safety throughout the codebase
- * 
+ * - Secure credential storage via OS credential manager (no plaintext)
+ *
  * The server is organized into:
  * - Services: Handle Trello API communication and data processing
  * - Tools: Define the MCP tools exposed to clients
@@ -30,7 +31,7 @@ import {
     ErrorCode
 } from "@modelcontextprotocol/sdk/types.js";
 
-import config from "./config.js";
+import { loadConfig, Config } from "./config.js";
 import { ServiceFactory } from "./services/service-factory.js";
 import { TrelloService } from "./services/trello-service.js";
 import { trelloTools } from "./tools/trello-tools.js";
@@ -52,8 +53,12 @@ console.error = (...args) => {
  * Main function that initializes and starts the MCP server
  */
 async function main() {
+
     try {
         console.log("Initializing Trello MCP Server...");
+
+        // Load configuration (credentials from OS credential store)
+        const config: Config = await loadConfig();
 
         // Initialize services and service factory
         const serviceFactory = ServiceFactory.initialize(
