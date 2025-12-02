@@ -211,20 +211,6 @@ export const memberTools = [
         }
     },
     {
-        name: "get_board_members",
-        description: "Get members of a board. Use this to see who has access to a board.",
-        inputSchema: {
-            type: "object",
-            properties: {
-                boardId: {
-                    type: "string",
-                    description: "ID of the board"
-                }
-            },
-            required: ["boardId"]
-        }
-    },
-    {
         name: "get_organization_members",
         description: "Get members of an organization. Use this to see who belongs to a workspace.",
         inputSchema: {
