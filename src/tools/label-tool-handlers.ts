@@ -58,16 +58,6 @@ export const labelToolHandlers = {
     },
 
     /**
-     * Get all labels on a board
-     * @param args - Tool arguments
-     * @returns Promise resolving to the labels
-     */
-    get_board_labels: async (args: any) => {
-        const labelService = ServiceFactory.getInstance().getLabelService();
-        return labelService.getBoardLabels(args.boardId);
-    },
-
-    /**
      * Update the name of a label
      * @param args - Tool arguments
      * @returns Promise resolving to the updated label

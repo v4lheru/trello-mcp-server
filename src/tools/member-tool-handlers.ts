@@ -112,16 +112,6 @@ export const memberToolHandlers = {
     },
 
     /**
-     * Get members of a board
-     * @param args - Tool arguments
-     * @returns Promise resolving to the members
-     */
-    get_board_members: async (args: any) => {
-        const memberService = ServiceFactory.getInstance().getMemberService();
-        return memberService.getBoardMembers(args.boardId);
-    },
-
-    /**
      * Get members of an organization
      * @param args - Tool arguments
      * @returns Promise resolving to the members

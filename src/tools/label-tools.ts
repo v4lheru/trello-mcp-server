@@ -89,20 +89,6 @@ export const labelTools = [
         }
     },
     {
-        name: "get_board_labels",
-        description: "Get all labels on a board. Use this tool to see the available labels on a board.",
-        inputSchema: {
-            type: "object",
-            properties: {
-                boardId: {
-                    type: "string",
-                    description: "ID of the board"
-                }
-            },
-            required: ["boardId"]
-        }
-    },
-    {
         name: "update_label_name",
         description: "Update the name of a label. Use this tool to rename a label.",
         inputSchema: {
